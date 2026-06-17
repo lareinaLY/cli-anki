@@ -1,0 +1,112 @@
+id: git
+title: Git 基础
+cards:
+  - id: git-init
+    prompt: 在当前目录初始化一个新的 Git 仓库
+    answer: git init
+    explanation: git init 在当前目录创建 .git 目录，把它变成一个仓库。
+    tags: [setup]
+
+  - id: git-status
+    prompt: 查看工作区和暂存区的当前状态
+    answer: git status
+    explanation: 显示哪些文件被修改、哪些已暂存、当前在哪个分支。
+    tags: [inspect]
+
+  - id: git-add-all
+    prompt: 把当前目录下所有改动加入暂存区
+    answer: git add .
+    accept:
+      - git add -A
+      - git add --all
+    explanation: |
+      git add . 暂存当前目录下的改动；git add -A / --all 还包含已删除文件，
+      范围略有差别，但都常用于“全部暂存”。
+    tags: [stage]
+
+  - id: git-commit-msg
+    prompt: 把暂存区的改动提交，提交信息写为 init
+    answer: git commit -m "init"
+    accept:
+      - git commit --message "init"
+    explanation: -m 直接在命令行给出提交信息，省去打开编辑器。
+    tags: [commit]
+
+  - id: git-reset-soft
+    prompt: 撤销最近一次 commit，但把改动保留在暂存区
+    answer: git reset --soft HEAD~1
+    accept:
+      - git reset --soft HEAD^
+    explanation: |
+      --soft 只移动 HEAD，index 和工作区都保留；
+      --mixed(默认) 会重置 index；--hard 会连工作区一起丢弃。
+    tags: [reset, undo]
+
+  - id: git-log-oneline
+    prompt: 以每行一条的简洁格式查看提交历史
+    answer: git log --oneline
+    explanation: --oneline 把每个提交压缩成“短哈希 + 标题”一行，便于速览。
+    tags: [history]
+
+  - id: git-branch-create
+    prompt: 创建一个名为 feature 的分支并立即切换过去
+    answer: git switch -c feature
+    accept:
+      - git checkout -b feature
+    explanation: |
+      git switch -c 是较新的语义化写法；git checkout -b 是传统等价写法。
+    tags: [branch]
+
+  - id: git-switch
+    prompt: 切换到已存在的分支 main
+    answer: git switch main
+    accept:
+      - git checkout main
+    explanation: git switch 专用于切换分支，比 checkout 语义更清晰。
+    tags: [branch]
+
+  - id: git-merge
+    prompt: 把 dev 分支合并到当前分支
+    answer: git merge dev
+    explanation: 在目标分支上执行，把 dev 的提交合并进来。
+    tags: [branch, merge]
+
+  - id: git-remote-v
+    prompt: 列出所有远程仓库及其 URL
+    answer: git remote -v
+    explanation: -v(verbose) 同时显示每个远程的抓取/推送 URL。
+    tags: [remote]
+
+  - id: git-pull
+    prompt: 从远程拉取最新提交并合并到当前分支
+    answer: git pull
+    explanation: git pull 相当于 git fetch 之后再 git merge。
+    tags: [remote, sync]
+
+  - id: git-push
+    prompt: 把本地当前分支的提交推送到远程
+    answer: git push
+    explanation: 把本地提交上传到已配置的上游分支。
+    tags: [remote, sync]
+
+  - id: git-restore-file
+    prompt: 丢弃工作区中文件 app.js 的未暂存改动
+    answer: git restore app.js
+    accept:
+      - git checkout -- app.js
+    explanation: |
+      git restore 是较新的写法；git checkout -- 是传统等价写法，
+      都会用暂存区/HEAD 的版本覆盖工作区文件。
+    tags: [undo]
+
+  - id: git-stash
+    prompt: 把当前未提交的改动临时存起来，让工作区变干净
+    answer: git stash
+    explanation: 把改动压入 stash 栈，之后用 git stash pop 取回。
+    tags: [stash]
+
+  - id: git-diff
+    prompt: 查看工作区相对暂存区的未暂存改动
+    answer: git diff
+    explanation: 不带参数的 git diff 显示尚未 git add 的改动。
+    tags: [inspect]
