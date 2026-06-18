@@ -1,19 +1,38 @@
+import { useState } from 'react';
 import { decks } from '../content/loader';
 import { StudyView } from './StudyView';
+import { Wordbook } from './Wordbook';
 import { useStudy } from './useStudy';
+import { buildWordbook } from '../study/wordbook';
 import { AiPanel } from './AiPanel';
 
 /** 单卡复习 mode: SRS-scheduled flashcards from the git deck. */
 export function StudyMode() {
   // MVP ships the git deck; a deck picker comes when bash is added.
-  const study = useStudy(decks[0]);
+  const deck = decks[0];
+  const study = useStudy(deck);
+  const [view, setView] = useState<'review' | 'wordbook'>('review');
 
   return (
     <>
       <section className="mode-col">
         <div className="counts-row">
           <span className="deck-name">{study.deckTitle}</span>
-          {study.status === 'studying' && (
+          <div className="subtabs">
+            <button
+              className={`subtab ${view === 'review' ? 'subtab-on' : ''}`}
+              onClick={() => setView('review')}
+            >
+              复习
+            </button>
+            <button
+              className={`subtab ${view === 'wordbook' ? 'subtab-on' : ''}`}
+              onClick={() => setView('wordbook')}
+            >
+              单词本
+            </button>
+          </div>
+          {view === 'review' && study.status === 'studying' && (
             <>
               <span className="pill pill-due">待复习 {study.dueCount}</span>
               <span className="pill pill-new">新卡 {study.newCount}</span>
@@ -22,7 +41,10 @@ export function StudyMode() {
           )}
         </div>
 
-        <div className="stage">
+        {view === 'wordbook' ? (
+          <Wordbook groups={buildWordbook(deck.cards, study.progress)} />
+        ) : (
+          <div className="stage">
           {study.status === 'loading' && <p className="hint">加载进度…</p>}
 
           {study.status === 'empty' && (
@@ -62,7 +84,8 @@ export function StudyMode() {
               </div>
             </div>
           )}
-        </div>
+          </div>
+        )}
       </section>
 
       <AiPanel card={study.current} />

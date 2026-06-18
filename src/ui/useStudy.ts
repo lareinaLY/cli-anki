@@ -38,6 +38,8 @@ export interface StudyApi {
   grade: (grade: ReviewGrade) => void;
   restart: () => void;
   reset: () => Promise<void>;
+  /** Live review state per card id, for the wordbook overview. */
+  progress: ReadonlyMap<string, CardProgress>;
 }
 
 function answersFor(card: Card): string[] {
@@ -159,5 +161,6 @@ export function useStudy(deck: Deck): StudyApi {
     grade,
     restart,
     reset,
+    progress,
   };
 }
