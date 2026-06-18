@@ -502,6 +502,83 @@ body {
   margin-top: 18px;
 }
 
+/* ---- vocab book ---- */
+.vocab {
+  padding-bottom: 22px;
+}
+.vocab .list-title {
+  margin-top: 22px;
+}
+.vocab-add {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+  margin-bottom: 16px;
+}
+.vocab-input {
+  flex: 1;
+  resize: vertical;
+  background: #010409;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 14px;
+  outline: none;
+}
+.vocab-input:focus {
+  border-color: var(--accent);
+}
+.vocab-add .submit {
+  margin-top: 0;
+  white-space: nowrap;
+}
+.vocab-preview {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px;
+  margin: 8px 0 24px;
+  background: var(--panel);
+}
+.vocab-list-title {
+  font-size: 14px;
+  color: var(--dim);
+  font-weight: 600;
+  margin: 8px 0 12px;
+}
+.vocab-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+.vocab-cmd {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--accent);
+  background: #010409;
+  padding: 3px 8px;
+  border-radius: 5px;
+  flex-shrink: 0;
+  max-width: 45%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.vocab-desc {
+  flex: 1;
+  min-width: 0;
+  color: var(--dim);
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 /* ---- AI panel ---- */
 .ai-panel {
   width: 360px;

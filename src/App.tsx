@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { StudyMode } from './ui/StudyMode';
 import { ScenarioMode } from './ui/ScenarioMode';
+import { VocabMode } from './ui/VocabMode';
 
-type Mode = 'study' | 'scenarios';
+type Mode = 'study' | 'scenarios' | 'vocab';
 
 export function App() {
   const [mode, setMode] = useState<Mode>('study');
@@ -26,10 +27,20 @@ export function App() {
           >
             场景练习
           </button>
+          <button
+            className={`tab ${mode === 'vocab' ? 'tab-on' : ''}`}
+            onClick={() => setMode('vocab')}
+          >
+            生词本
+          </button>
         </nav>
       </header>
 
-      <div className="workspace">{mode === 'study' ? <StudyMode /> : <ScenarioMode />}</div>
+      <div className="workspace">
+        {mode === 'study' && <StudyMode />}
+        {mode === 'scenarios' && <ScenarioMode />}
+        {mode === 'vocab' && <VocabMode />}
+      </div>
 
       <footer className="footer">用背单词的方式学命令行 · 进度仅保存在本机浏览器</footer>
     </main>

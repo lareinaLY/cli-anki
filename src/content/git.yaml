@@ -10,7 +10,11 @@ cards:
       它在当前目录创建一个隐藏的 `.git` 目录——这才是**仓库本体**，所有提交、分支、
       配置都存在里面。删掉 `.git`，项目就退回成普通文件夹，Git 对它的历史一无所知。
 
-      #### 🕰 一点历史
+      #### 🧠 记忆钩子
+
+      `init` 是 **init**ialize 的头四个字母；想到“从无到有，点亮一个 `.git`”。
+
+      #### 🕰 冷知识
 
       Git 由 Linux 之父 **Linus Torvalds** 在 2005 年花十来天写成，起因是 Linux
       内核团队当时用的 **BitKeeper** 突然撤回了免费授权。`git` 在英国俚语里指
@@ -31,6 +35,10 @@ cards:
       - 哪些文件**被修改但未暂存**，以及哪些是**未跟踪**的新文件
 
       > 习惯：每次 `add` / `commit` 前先 `git status` 看一眼，能避免一大半误操作。
+
+      #### 🧠 记忆钩子
+
+      动手前先问一句“现在啥**状态**？”——`status` 是你的仪表盘。
     tags: [inspect]
 
   - id: git-add-all
@@ -51,6 +59,10 @@ cards:
       `-A` 是 **all** 的缩写。日常想“全暂存”用哪个都行，差别只在删除文件和起始目录。
 
       > 暂存区的存在是 Git 的独特设计：你能精细挑选这次提交哪些、不提交哪些。
+
+      #### 🧠 记忆钩子
+
+      `add` 是“加入购物车”，`.` 是“当前这筐全要”；真正“结账”的是 `commit`。
     tags: [stage]
 
   - id: git-commit-msg
@@ -65,12 +77,16 @@ cards:
       - `-m` = **message**，直接在命令行写提交信息，省去打开编辑器
       - 不加 `-m` 会弹出默认编辑器让你写信息
 
-      #### 为什么叫 commit？
-
-      这个词来自数据库的“事务提交”——把一批改动作为一个整体**确定下来、不可分割**。
-      Git 的一次 commit 同样是带唯一哈希、不可篡改的快照。
-
       > 提交信息写清“做了什么、为什么”，未来的你和同事都会感谢现在的你。
+
+      #### 🧠 记忆钩子
+
+      `-m` 就记成 **m**essage 的 m——“提交必带一张留言条”。
+
+      #### 🕰 冷知识
+
+      `commit` 一词来自数据库的“事务提交”——把一批改动作为一个整体**确定下来、
+      不可分割**。Git 的一次 commit 同样是带唯一哈希、不可篡改的快照。
     tags: [commit]
 
   - id: git-reset-soft
@@ -98,6 +114,10 @@ cards:
 
       > 暂存区有三个名字——**index** / **staging area** / **cache**，说的是同一个
       > 东西。这也是为什么有些命令里会看到 `--cached`。
+
+      #### 🧠 记忆钩子
+
+      软硬之分：`--soft` 软着陆（改动还在），`--hard` 硬碰硬（全没了）。
     tags: [reset, undo]
 
   - id: git-log-oneline
@@ -115,6 +135,10 @@ cards:
       - `git log --oneline -5` — 只看最近 5 条
 
       > 提交历史进入的是 `less` 分页器，按 `q` 退出。
+
+      #### 🧠 记忆钩子
+
+      `log` 是日志，`--oneline` 顾名思义——一行一条。
     tags: [history]
 
   - id: git-branch-create
@@ -130,6 +154,10 @@ cards:
       两者效果相同：从当前提交**长出**一个新分支，并把你**移动**到它上面。
 
       > 只想建分支、不切换，用 `git branch feature`。新分支默认基于你当前所在的提交。
+
+      #### 🧠 记忆钩子
+
+      `-c` = **c**reate，`-b` = **b**ranch；记住“切的同时，顺手建”。
     tags: [branch]
 
   - id: git-switch
@@ -155,6 +183,10 @@ cards:
       - 恢复文件 → `git restore`
 
       `checkout` 至今仍可用（老教程、老脚本里常见），但写新东西推荐 `switch`。
+
+      #### 🧠 记忆钩子
+
+      `switch` 像电视换台——只负责“切”，不负责“修”（修文件那是 `restore`）。
     tags: [branch]
 
   - id: git-merge
@@ -170,6 +202,10 @@ cards:
       - **合并提交（merge commit）** — 两边都有新提交时，Git 造一个有两个父节点的提交把它们缝起来
 
       > 两边改了同一处会产生**冲突（conflict）**，需手动选择保留哪部分再提交。
+
+      #### 🧠 记忆钩子
+
+      `merge` = 汇流；站在“要接水的那条河”（目标分支）上，喊一声 merge。
     tags: [branch, merge]
 
   - id: git-remote-v
@@ -184,6 +220,10 @@ cards:
       `origin` 是克隆时默认的远程名——只是个**约定俗成的别名**，不是关键字，可以改。
 
       > 新增远程：`git remote add 名字 URL`。
+
+      #### 🧠 记忆钩子
+
+      `remote` 是“远方的它”，`-v` 让它 **v**erbose，多吐两行 URL 出来。
     tags: [remote]
 
   - id: git-pull
@@ -197,6 +237,10 @@ cards:
 
       > 想让历史更线性，可用 `git pull --rebase`：用 rebase 代替 merge，
       > 避免一堆“Merge branch”提交。
+
+      #### 🧠 记忆钩子
+
+      `pull` 往怀里拉（取回 + 合并），`push` 往外推；一拉一推，方向相反。
     tags: [remote, sync]
 
   - id: git-push
@@ -209,6 +253,10 @@ cards:
       - `-u` = **set-upstream**，建立本地与远程分支的**跟踪关系**，之后直接 `git push` 即可
 
       > push 只上传**已提交**的内容——还在工作区/暂存区、没 commit 的改动不会被推上去。
+
+      #### 🧠 记忆钩子
+
+      首次推送记得 `-u` 给分支认个“上家”（**u**pstream），之后 `git push` 就够了。
     tags: [remote, sync]
 
   - id: git-restore-file
@@ -223,6 +271,10 @@ cards:
       - `git checkout -- app.js` — 传统等价写法
 
       > ⚠️ 此操作**不可撤销**：丢弃的是没提交也没暂存的改动，找不回来。确认真的不要了再执行。
+
+      #### 🧠 记忆钩子
+
+      `restore` = 复原，把文件“读档”回上次保存点；存档（commit）之后才安全。
     tags: [undo]
 
   - id: git-stash
@@ -240,6 +292,10 @@ cards:
       - `git stash list` — 看收了哪些
 
       > stash 是个**栈**，可以收多次；`pop` 之后那条记录就消失了。
+
+      #### 🧠 记忆钩子
+
+      `stash` 像把桌面一把扫进抽屉；`pop`（弹出）再把抽屉整个倒回来。
     tags: [stash]
 
   - id: git-diff
@@ -256,4 +312,13 @@ cards:
       - `git diff HEAD` — 工作区 vs 上次提交（所有未提交改动）
 
       > `--staged` 和 `--cached` 是同义词，前者更好记。
+
+      #### 🧠 记忆钩子
+
+      `diff` 看“改了啥”；不加参数 = 只看“还没 `add` 的那部分”。
+
+      #### 🕰 冷知识
+
+      `diff` 这个词来自 1974 年 Unix 的 `diff` 工具（Doug McIlroy 等人所作）。
+      “求两个文件差异”的算法和命名沿用至今，Git 只是把它搬进了版本控制。
     tags: [inspect]
