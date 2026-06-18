@@ -3,6 +3,8 @@ import type { Card } from '../content/types';
 import { Rating, type ReviewGrade } from '../srs/scheduler';
 import type { JudgeResult } from '../matcher/match';
 import { formatDue } from './format';
+import { Explanation } from './Explanation';
+import { PromptView } from './PromptView';
 
 interface GradeButton {
   grade: ReviewGrade;
@@ -37,18 +39,18 @@ export function StudyView({ card, phase, result, intervals, onSubmit, onGrade }:
     inputRef.current?.focus();
   }, [card.id]);
 
-  // After grading, allow 1–4 to pick a grade and Enter to take the default
-  // (记住了 when correct, 重来 when wrong).
+  // After grading, allow 1–4 to pick a difficulty. Enter is intentionally NOT
+  // bound here: the Enter that submitted the answer can bubble to window as the
+  // graded phase mounts, which would otherwise auto-advance before the user has
+  // chosen a difficulty. Grading must be an explicit choice (key or click).
   useEffect(() => {
     if (phase !== 'graded' || !result) return;
     const handler = (e: KeyboardEvent) => {
+      if (e.repeat) return;
       const hit = GRADES.find((g) => g.key === e.key);
       if (hit) {
         e.preventDefault();
         onGrade(hit.grade);
-      } else if (e.key === 'Enter') {
-        e.preventDefault();
-        onGrade(result.correct ? Rating.Good : Rating.Again);
       }
     };
     window.addEventListener('keydown', handler);
@@ -59,7 +61,7 @@ export function StudyView({ card, phase, result, intervals, onSubmit, onGrade }:
 
   return (
     <section className="card">
-      <p className="prompt">{card.prompt}</p>
+      <PromptView prompt={card.prompt} constraint={card.constraint} />
 
       <div className={`terminal ${phase === 'graded' ? (result?.correct ? 'ok' : 'bad') : ''}`}>
         <span className="dollar">$</span>
@@ -74,6 +76,8 @@ export function StudyView({ card, phase, result, intervals, onSubmit, onGrade }:
             placeholder="在此输入命令，回车提交"
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => {
+              // Ignore Enter while an IME is composing (e.g. selecting a pinyin candidate).
+              if (e.nativeEvent.isComposing) return;
               if (e.key === 'Enter' && input.trim()) onSubmit(input);
             }}
           />
@@ -104,7 +108,7 @@ export function StudyView({ card, phase, result, intervals, onSubmit, onGrade }:
               正确答案：<code>{card.answer}</code>
             </p>
           )}
-          {card.explanation && <p className="explanation">{card.explanation}</p>}
+          {card.explanation && <Explanation>{card.explanation}</Explanation>}
 
           <div className="grades">
             {GRADES.map((g) => (

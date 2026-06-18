@@ -2,111 +2,258 @@ id: git
 title: Git 基础
 cards:
   - id: git-init
-    prompt: 在当前目录初始化一个新的 Git 仓库
+    prompt: 在当前目录[初始化]一个新的 {Git 仓库}
     answer: git init
-    explanation: git init 在当前目录创建 .git 目录，把它变成一个仓库。
+    explanation: |
+      `init` = **initialize**（初始化）。
+
+      它在当前目录创建一个隐藏的 `.git` 目录——这才是**仓库本体**，所有提交、分支、
+      配置都存在里面。删掉 `.git`，项目就退回成普通文件夹，Git 对它的历史一无所知。
+
+      #### 🕰 一点历史
+
+      Git 由 Linux 之父 **Linus Torvalds** 在 2005 年花十来天写成，起因是 Linux
+      内核团队当时用的 **BitKeeper** 突然撤回了免费授权。`git` 在英国俚语里指
+      “讨厌鬼”，Linus 半开玩笑地这么命名，还自嘲“我的项目都以自己命名——先是
+      Linux，现在是 git”。
     tags: [setup]
 
   - id: git-status
-    prompt: 查看工作区和暂存区的当前状态
+    prompt: '[查看]{工作区和暂存区}的当前状态'
     answer: git status
-    explanation: 显示哪些文件被修改、哪些已暂存、当前在哪个分支。
+    explanation: |
+      `status` = 状态。最常用的“我现在在哪、动了什么”命令。
+
+      它一眼告诉你三件事：
+
+      - 当前在哪个**分支**
+      - 哪些文件**已暂存**（会进下一次提交）
+      - 哪些文件**被修改但未暂存**，以及哪些是**未跟踪**的新文件
+
+      > 习惯：每次 `add` / `commit` 前先 `git status` 看一眼，能避免一大半误操作。
     tags: [inspect]
 
   - id: git-add-all
-    prompt: 把当前目录下所有改动加入暂存区
+    prompt: '把{当前目录下所有改动}[加入]暂存区'
     answer: git add .
     accept:
       - git add -A
       - git add --all
     explanation: |
-      git add . 暂存当前目录下的改动；git add -A / --all 还包含已删除文件，
-      范围略有差别，但都常用于“全部暂存”。
+      `add` 把改动从**工作区**放进**暂存区**（index）——也就是挑选“这次要提交哪些内容”。
+
+      #### 三种写法的差别
+
+      - `git add .` — 暂存**当前目录及子目录**的改动
+      - `git add -A` / `--all` — 暂存**整个仓库**的改动，且包含已删除文件
+      - `git add 文件名` — 只暂存指定文件
+
+      `-A` 是 **all** 的缩写。日常想“全暂存”用哪个都行，差别只在删除文件和起始目录。
+
+      > 暂存区的存在是 Git 的独特设计：你能精细挑选这次提交哪些、不提交哪些。
     tags: [stage]
 
   - id: git-commit-msg
-    prompt: 把暂存区的改动提交，提交信息写为 init
+    prompt: '[提交]{暂存区的改动}'
+    constraint: 提交信息写为 {init}
     answer: git commit -m "init"
     accept:
       - git commit --message "init"
-    explanation: -m 直接在命令行给出提交信息，省去打开编辑器。
+    explanation: |
+      `commit` = 提交。把暂存区的内容**永久记录**成历史上的一个节点。
+
+      - `-m` = **message**，直接在命令行写提交信息，省去打开编辑器
+      - 不加 `-m` 会弹出默认编辑器让你写信息
+
+      #### 为什么叫 commit？
+
+      这个词来自数据库的“事务提交”——把一批改动作为一个整体**确定下来、不可分割**。
+      Git 的一次 commit 同样是带唯一哈希、不可篡改的快照。
+
+      > 提交信息写清“做了什么、为什么”，未来的你和同事都会感谢现在的你。
     tags: [commit]
 
   - id: git-reset-soft
-    prompt: 撤销最近一次 commit，但把改动保留在暂存区
+    prompt: '[撤销]最近一次 {commit}'
+    constraint: 把改动[保留]在{暂存区}
     answer: git reset --soft HEAD~1
     accept:
       - git reset --soft HEAD^
     explanation: |
-      --soft 只移动 HEAD，index 和工作区都保留；
-      --mixed(默认) 会重置 index；--hard 会连工作区一起丢弃。
+      #### 先认几个名字
+
+      - `HEAD` — 你“当前所在的提交”，通常是当前分支的最新提交
+      - `HEAD~1` — 从 `HEAD` 往回数 1 个的提交（`~` 读作 **tilde**，波浪号）
+      - `HEAD^` — **caret**（脱字符），多数情况下等价于 `HEAD~1`
+
+      #### 三档强度
+
+      `reset` 把分支指针挪回某个提交，`--soft` / `--mixed` / `--hard` 决定顺带把
+      暂存区、工作区重置到什么程度：
+
+      - `--soft` — 只挪指针，**暂存区和工作区原封不动**；上次改动还在、还已暂存，
+        相当于把那次提交“拆封”，方便改完重新提交
+      - `--mixed`（默认）— 连暂存区一起清空，改动退回未暂存
+      - `--hard` — 连工作区也重置，**改动彻底丢弃**；唯一会真正删数据的一档，慎用
+
+      > 暂存区有三个名字——**index** / **staging area** / **cache**，说的是同一个
+      > 东西。这也是为什么有些命令里会看到 `--cached`。
     tags: [reset, undo]
 
   - id: git-log-oneline
-    prompt: 以每行一条的简洁格式查看提交历史
+    prompt: 以每行一条的简洁格式[查看]{提交历史}
     answer: git log --oneline
-    explanation: --oneline 把每个提交压缩成“短哈希 + 标题”一行，便于速览。
+    explanation: |
+      `log` 列出**提交历史**（从近到远）。
+
+      - 不加参数：每个提交占好几行（哈希、作者、日期、信息）
+      - `--oneline`：压成**一行**——短哈希 + 提交标题，速览利器
+
+      #### 常见搭配
+
+      - `git log --oneline --graph` — 额外画出分支合并的“铁路图”
+      - `git log --oneline -5` — 只看最近 5 条
+
+      > 提交历史进入的是 `less` 分页器，按 `q` 退出。
     tags: [history]
 
   - id: git-branch-create
-    prompt: 创建一个名为 feature 的分支并立即切换过去
+    prompt: '[创建]一个名为 {feature} 的分支'
+    constraint: 并立即[切换]过去
     answer: git switch -c feature
     accept:
       - git checkout -b feature
     explanation: |
-      git switch -c 是较新的语义化写法；git checkout -b 是传统等价写法。
+      - `git switch -c feature` — `-c` = **create**，新建分支并切过去
+      - `git checkout -b feature` — 传统等价写法，`-b` = **branch**
+
+      两者效果相同：从当前提交**长出**一个新分支，并把你**移动**到它上面。
+
+      > 只想建分支、不切换，用 `git branch feature`。新分支默认基于你当前所在的提交。
     tags: [branch]
 
   - id: git-switch
-    prompt: 切换到已存在的分支 main
+    prompt: '[切换]到已存在的{分支 main}'
     answer: git switch main
     accept:
       - git checkout main
-    explanation: git switch 专用于切换分支，比 checkout 语义更清晰。
+    explanation: |
+      `switch` 字面意思就是“**切换分支**”。它和 `git restore` 是
+      **Git 2.23（2019）** 新增的一对命令。
+
+      #### 为什么要新增？
+
+      老命令 `git checkout` 一个词扛了太多职责：
+
+      - 切换分支
+      - 把单个文件恢复到某个版本
+
+      两件危险程度完全不同的事共用一个命令，新手极易混淆，甚至手一抖丢掉改动。于是
+      官方拆成两个语义明确的命令：
+
+      - 切分支 → `git switch`
+      - 恢复文件 → `git restore`
+
+      `checkout` 至今仍可用（老教程、老脚本里常见），但写新东西推荐 `switch`。
     tags: [branch]
 
   - id: git-merge
-    prompt: 把 dev 分支合并到当前分支
+    prompt: 把 {dev} 分支[合并]到当前分支
     answer: git merge dev
-    explanation: 在目标分支上执行，把 dev 的提交合并进来。
+    explanation: |
+      `merge` 把另一个分支的提交**并入当前分支**。注意要站在**接收方**分支上执行：
+      想把 `dev` 并进 `main`，先 `git switch main`，再 `git merge dev`。
+
+      #### 两种合并结果
+
+      - **快进（fast-forward）** — 当前分支没有新提交时，指针直接前移，不产生新提交
+      - **合并提交（merge commit）** — 两边都有新提交时，Git 造一个有两个父节点的提交把它们缝起来
+
+      > 两边改了同一处会产生**冲突（conflict）**，需手动选择保留哪部分再提交。
     tags: [branch, merge]
 
   - id: git-remote-v
-    prompt: 列出所有远程仓库及其 URL
+    prompt: '[列出]所有{远程仓库}及其 URL'
     answer: git remote -v
-    explanation: -v(verbose) 同时显示每个远程的抓取/推送 URL。
+    explanation: |
+      `remote` 管理**远程仓库**（托管在 GitHub 等处的副本）。
+
+      - `-v` = **verbose**（详细），一并列出每个远程的 **fetch（抓取）** 和 **push（推送）** 地址
+      - 不加 `-v` 只显示远程的名字
+
+      `origin` 是克隆时默认的远程名——只是个**约定俗成的别名**，不是关键字，可以改。
+
+      > 新增远程：`git remote add 名字 URL`。
     tags: [remote]
 
   - id: git-pull
-    prompt: 从远程拉取最新提交并合并到当前分支
+    prompt: 从远程[拉取]{最新提交}并合并到当前分支
     answer: git pull
-    explanation: git pull 相当于 git fetch 之后再 git merge。
+    explanation: |
+      `pull` = 拉取。一步完成“取回远程更新 + 合并到本地”，其实等于两步：
+
+      - `git fetch` — 把远程的新提交下载到本地（但不动你的分支）
+      - `git merge` — 再把它们合并进当前分支
+
+      > 想让历史更线性，可用 `git pull --rebase`：用 rebase 代替 merge，
+      > 避免一堆“Merge branch”提交。
     tags: [remote, sync]
 
   - id: git-push
-    prompt: 把本地当前分支的提交推送到远程
+    prompt: 把{本地当前分支的提交}[推送]到远程
     answer: git push
-    explanation: 把本地提交上传到已配置的上游分支。
+    explanation: |
+      `push` = 推送。把本地提交**上传**到远程对应分支，和 `pull` 方向相反。
+
+      - 第一次推送一个新分支，常要写全：`git push -u origin 分支名`
+      - `-u` = **set-upstream**，建立本地与远程分支的**跟踪关系**，之后直接 `git push` 即可
+
+      > push 只上传**已提交**的内容——还在工作区/暂存区、没 commit 的改动不会被推上去。
     tags: [remote, sync]
 
   - id: git-restore-file
-    prompt: 丢弃工作区中文件 app.js 的未暂存改动
+    prompt: '[丢弃]{工作区文件 app.js}的未暂存改动'
     answer: git restore app.js
     accept:
       - git checkout -- app.js
     explanation: |
-      git restore 是较新的写法；git checkout -- 是传统等价写法，
-      都会用暂存区/HEAD 的版本覆盖工作区文件。
+      把文件**恢复**到暂存区/HEAD 的版本，即扔掉工作区里还没暂存的改动。
+
+      - `git restore app.js` — 较新写法（Git 2.23+），语义清晰
+      - `git checkout -- app.js` — 传统等价写法
+
+      > ⚠️ 此操作**不可撤销**：丢弃的是没提交也没暂存的改动，找不回来。确认真的不要了再执行。
     tags: [undo]
 
   - id: git-stash
-    prompt: 把当前未提交的改动临时存起来，让工作区变干净
+    prompt: 把{当前未提交的改动}临时[存]起来
+    constraint: 让{工作区}变干净
     answer: git stash
-    explanation: 把改动压入 stash 栈，之后用 git stash pop 取回。
+    explanation: |
+      `stash` 本意是“**藏匿、暂存**”。它把当前未提交的改动**打包收起来**、压入一个栈，
+      让工作区瞬间变干净。
+
+      典型场景：代码改到一半，突然要切分支处理急事——先 `git stash` 收起来，事后再取回。
+
+      - `git stash` — 收起改动
+      - `git stash pop` — 取回最近一次收起的改动，并从栈里删除
+      - `git stash list` — 看收了哪些
+
+      > stash 是个**栈**，可以收多次；`pop` 之后那条记录就消失了。
     tags: [stash]
 
   - id: git-diff
-    prompt: 查看工作区相对暂存区的未暂存改动
+    prompt: '[查看]{工作区相对暂存区}的未暂存改动'
     answer: git diff
-    explanation: 不带参数的 git diff 显示尚未 git add 的改动。
+    explanation: |
+      `diff` 显示**差异**。不带参数时比较的是**工作区 vs 暂存区**——也就是你改了、
+      但还没 `git add` 的内容。
+
+      #### 看不同阶段的差异
+
+      - `git diff` — 工作区 vs 暂存区（未暂存的改动）
+      - `git diff --staged` — 暂存区 vs 上次提交（已暂存、待提交的改动）
+      - `git diff HEAD` — 工作区 vs 上次提交（所有未提交改动）
+
+      > `--staged` 和 `--cached` 是同义词，前者更好记。
     tags: [inspect]

@@ -1,0 +1,81 @@
+scenarios:
+  - id: new-repo
+    title: 新建仓库并提交第一版
+    intro: 你刚写好一个小项目，想用 Git 管起来。跟着走一遍——从一个普通文件夹，到拥有第一个提交。
+    steps:
+      - prompt: 在当前目录[初始化]一个 {Git 仓库}
+        answer: git init
+        explanation: '`init` = initialize。创建隐藏的 `.git` 目录，项目从此被 Git 跟踪。'
+        narration: 多了个 .git 目录，仓库就绪——但 Git 还没开始管理任何文件。
+
+      - prompt: '[查看]当前{状态}，看看有哪些文件'
+        answer: git status
+        narration: 看到一堆 “Untracked files”：这些文件 Git 还没纳入管理。
+
+      - prompt: 把{当前目录所有文件}[加入]暂存区
+        answer: git add .
+        accept:
+          - git add -A
+          - git add --all
+        narration: 文件进了暂存区，准备打包成一次提交。
+
+      - prompt: '[提交]暂存区的内容'
+        constraint: 提交信息写为 {first commit}
+        answer: git commit -m "first commit"
+        accept:
+          - git commit --message "first commit"
+        explanation: '`-m` = message，直接写提交信息。这是项目历史上的第一个节点。'
+        narration: 🎉 第一次提交完成，项目有了第一个历史节点。
+
+  - id: connect-github
+    title: 把本地仓库连上 GitHub
+    intro: 本地已经有提交了，想推到 GitHub 备份/协作。假设你已在 GitHub 网页上建好了一个空仓库，拿到了它的 URL。
+    steps:
+      - prompt: '[添加]一个名为 {origin} 的远程'
+        constraint: 指向 {https://github.com/me/app.git}
+        answer: git remote add origin https://github.com/me/app.git
+        explanation: '`remote add 名字 URL`。`origin` 是约定俗成的默认远程名，可改。'
+        narration: 现在本地知道 origin 指向那个 GitHub 仓库了。
+
+      - prompt: '[确认]{远程}确实配好了'
+        answer: git remote -v
+        narration: 列出了 origin 的 fetch / push 地址，连接无误。
+
+      - prompt: 把当前分支[改名]为 {main}
+        answer: git branch -M main
+        explanation: '`-M` = 强制重命名当前分支。GitHub 默认主分支叫 `main`，对齐它。'
+        narration: 本地主分支名和 GitHub 默认一致了。
+
+      - prompt: 首次[推送]并建立跟踪关系
+        constraint: 推到 {origin} 的 {main} 分支
+        answer: git push -u origin main
+        explanation: '`-u` = set-upstream，记住本地与远程分支的对应关系，之后直接 `git push` 即可。'
+        narration: 🎉 代码上了 GitHub，以后一个 git push 就能同步。
+
+  - id: rollback
+    title: 回滚到之前的版本
+    intro: 刚提交的改动有问题，想回到上一个版本。怎么回，取决于「要不要保留改动」和「是否已经推送」。
+    steps:
+      - prompt: 先[查看]{提交历史}，找到要回到的位置
+        answer: git log --oneline
+        narration: 记下目标提交的短哈希，心里有数。
+
+      - prompt: '[撤销]最近一次 {commit}'
+        constraint: 但把改动[留]在{暂存区}
+        answer: git reset --soft HEAD~1
+        accept:
+          - git reset --soft HEAD^
+        explanation: '`--soft` 只挪 HEAD，改动原样留在暂存区，可以改完重新提交。'
+        narration: 提交没了，但改动还在——这是最温和的回滚。
+
+      - prompt: 如果改动也不想要了，彻底[丢弃]并回到{上一版}
+        answer: git reset --hard HEAD~1
+        accept:
+          - git reset --hard HEAD^
+        explanation: '`--hard` 连工作区一起重置，未提交的改动**永久丢弃**，慎用。'
+        narration: ⚠️ 工作区也回到了上一版，刚才的改动已经找不回来了。
+
+      - prompt: 若这个提交已推送到远程，用一次新提交[抵消]{它}
+        answer: git revert HEAD
+        explanation: '`revert` 不改写历史，而是生成一个「反操作」提交。对已共享的提交更安全。'
+        narration: revert 造了个新提交抵消改动，历史保持线性，协作者不会被打乱。
