@@ -1,0 +1,267 @@
+id: shell
+title: 命令行基础 · zsh
+cards:
+  - id: sh-pwd
+    prompt: '[显示]当前所在目录的{完整路径}'
+    answer: pwd
+    explanation: |
+      `pwd` = **p**rint **w**orking **d**irectory，打印你“现在站在哪个目录”。
+
+      #### 🧠 记忆钩子
+
+      迷路了就喊一声 `pwd`——“我在哪？”
+    tags: [nav]
+
+  - id: sh-cd-home
+    prompt: '[回到]当前用户的{主目录}'
+    answer: cd
+    accept:
+      - cd ~
+    explanation: |
+      `cd` = **c**hange **d**irectory。不带参数的 `cd` 直接回主目录；`~` 是主目录的
+      简写（你的大概是 `/Users/你的用户名`）。
+
+      #### 🧠 记忆钩子
+
+      空 `cd` = 回家；`~` 就是“家”的门牌。
+    tags: [nav]
+
+  - id: sh-ls-la
+    prompt: '[列出]当前目录{所有文件}（含隐藏），并显示详细信息'
+    answer: ls -la
+    accept:
+      - ls -al
+      - ls -a -l
+    explanation: |
+      `ls` = **l**i**s**t。`-l` = long（详细：权限/大小/时间），`-a` = all（包含以
+      `.` 开头的隐藏文件）。两个短选项可合写成 `-la`。
+
+      #### 🧠 记忆钩子
+
+      l = long 看详细，a = all 全都看，`-la` 一把梭。
+    tags: [nav, inspect]
+
+  - id: sh-mkdir-p
+    prompt: '[创建]多层目录 {src/utils/api}'
+    constraint: 父目录不存在也一并建好
+    answer: mkdir -p src/utils/api
+    explanation: |
+      `mkdir` = **m**a**k**e **dir**ectory。`-p` = parents，缺哪层父目录就补哪层，
+      且已存在也不报错。
+
+      #### 🧠 记忆钩子
+
+      `-p` = parents——“爹妈不在，就先把爹妈一起生出来”。
+    tags: [file]
+
+  - id: sh-cp
+    prompt: 把文件 {a.txt} [复制]为 {b.txt}
+    answer: cp a.txt b.txt
+    explanation: |
+      `cp` = **c**o**p**y。第一个是**源**，第二个是**目标**。复制整个目录要加
+      `-r`（recursive）。
+
+      #### 🧠 记忆钩子
+
+      `cp` 顺序永远是“从谁 → 到谁”。
+    tags: [file]
+
+  - id: sh-mv
+    prompt: 把 {a.txt} [重命名]为 {b.txt}
+    answer: mv a.txt b.txt
+    explanation: |
+      `mv` = **m**o**v**e。移动和重命名是**同一个命令**——本质都是把文件“挪个名字
+      / 挪个位置”。
+
+      #### 🧠 记忆钩子
+
+      `mv` 既能搬家又能改名，记成一个字：“挪”。
+    tags: [file]
+
+  - id: sh-rm-rf
+    prompt: '[删除]整个目录 {build}'
+    constraint: 连里面所有内容一起删
+    answer: rm -rf build
+    explanation: |
+      `rm` = **r**e**m**ove。`-r` = recursive（连子目录一起），`-f` = force（不逐个
+      确认）。
+
+      > ⚠️ `rm -rf` **不进废纸篓、不可恢复**。尤其当心路径写错或多打了空格。
+
+      #### 🧠 记忆钩子
+
+      `-r` 递归钻进去，`-f` 强行清场；威力大，手要稳。
+    tags: [file]
+
+  - id: sh-touch
+    prompt: '[创建]一个空文件 {app.js}'
+    answer: touch app.js
+    explanation: |
+      `touch` 本职是“更新文件的时间戳”，但当文件不存在时会顺手创建一个空文件——
+      这反而是它最常见的用法。
+
+      #### 🧠 记忆钩子
+
+      “碰一下” `app.js`，没有就给你建一个空的。
+    tags: [file]
+
+  - id: sh-cat
+    prompt: 把文件 {config.json} 的[全部内容]打印到屏幕
+    answer: cat config.json
+    explanation: |
+      `cat` = con**cat**enate（拼接）。本意是把多个文件首尾相接，最常见却是“一次性
+      打印一个文件”。
+
+      #### 🧠 记忆钩子
+
+      `cat` 不是猫，是 con**cat**——把内容“接”出来给你看。
+
+      #### 🕰 冷知识
+
+      `cat` 是 Unix 最早的工具之一，名字真就取自 concatenate；想拼接两个文件就
+      `cat a b > c`。
+    tags: [view]
+
+  - id: sh-less
+    prompt: 分页[查看]大文件 {app.log}
+    answer: less app.log
+    explanation: |
+      `less` 是分页器，逐屏翻看大文件而不刷满屏幕。按 `q` 退出，`/关键词` 搜索。
+
+      #### 🧠 记忆钩子
+
+      老工具叫 `more`，更强的后辈偏叫 `less`——程序员的“less is more”玩笑。
+
+      #### 🕰 冷知识
+
+      `less` 的命名就是在调侃前辈 `more`：功能明明更多，却叫 less。
+    tags: [view]
+
+  - id: sh-tail-f
+    prompt: 实时[跟踪]日志文件 {app.log} 的新增内容
+    answer: tail -f app.log
+    explanation: |
+      `tail` 显示文件**末尾**（默认最后 10 行）。`-f` = follow，文件一有新内容就
+      实时追加显示——看日志神器。
+
+      #### 🧠 记忆钩子
+
+      `tail` = 尾巴，`-f` = follow，紧紧跟着尾巴看。
+    tags: [view]
+
+  - id: sh-grep
+    prompt: 在 {app.log} 中[搜索]包含 {error} 的行
+    answer: grep error app.log
+    explanation: |
+      `grep` 按“模式”在文本里筛选行。常用 `-i` 忽略大小写、`-n` 显示行号、`-r`
+      递归搜整个目录。
+
+      #### 🧠 记忆钩子
+
+      `grep 关键词 文件`——把含某词的行“抓”出来。
+
+      #### 🕰 冷知识
+
+      `grep` 来自老编辑器 ed 的命令 `g/re/p`——**g**lobal / **r**egular
+      **e**xpression / **p**rint，后来独立成了命令。
+    tags: [search]
+
+  - id: sh-find
+    prompt: 在当前目录递归[查找]名为 {app.js} 的文件
+    answer: find . -name app.js
+    explanation: |
+      `find` 从某目录起递归找文件。`.` 是起点（当前目录），`-name` 按文件名匹配
+      （可用 `'*.js'` 这样的通配）。
+
+      #### 🧠 记忆钩子
+
+      套路固定：`find 哪里 -name 叫啥`。
+    tags: [search]
+
+  - id: sh-chmod-x
+    prompt: 给脚本 {deploy.sh} [添加]可执行权限
+    answer: chmod +x deploy.sh
+    explanation: |
+      `chmod` = **ch**ange **mod**e（权限）。`+x` 给文件加上“可执行”位，脚本才能用
+      `./deploy.sh` 直接运行。
+
+      #### 🧠 记忆钩子
+
+      `chmod` = change mode，`+x` = 加上“能跑”这一档。
+
+      #### 🕰 冷知识
+
+      权限也能用数字写，如 `chmod 755`——7=rwx、5=r-x，是三组八进制位。
+    tags: [perm]
+
+  - id: sh-pipe
+    prompt: 把 {ls} 的输出用[管道]传给 {grep} 过滤出含 .js 的行
+    answer: ls | grep .js
+    explanation: |
+      `|`（管道）把左边命令的输出“喂”给右边命令当输入，是 Unix“小工具拼装”的灵魂。
+
+      #### 🧠 记忆钩子
+
+      `|` 像一根水管，把左边的水接到右边。
+
+      #### 🕰 冷知识
+
+      管道由 Doug McIlroy 在 1973 年引入 Unix，“让程序像水管一样串起来”至今仍是
+      命令行的核心哲学。
+    tags: [pipe]
+
+  - id: sh-redirect
+    prompt: 把 {echo hello} 的输出[写入]文件 {out.txt}
+    constraint: 覆盖原有内容
+    answer: echo hello > out.txt
+    explanation: |
+      `>` 把输出重定向到文件并**覆盖**原内容；`>>` 则是**追加**到末尾。
+
+      #### 🧠 记忆钩子
+
+      一个 `>` 覆盖，两个 `>>` 追加——箭头越多越“客气”，不删旧的。
+    tags: [pipe, redirect]
+
+  - id: sh-source-zshrc
+    prompt: 让刚改过的 {~/.zshrc} 配置[立即生效]
+    answer: source ~/.zshrc
+    accept:
+      - . ~/.zshrc
+    explanation: |
+      `~/.zshrc` 是 zsh 的启动配置（别名、环境变量、提示符都写在这）。改完它默认要
+      下次开终端才生效；`source`（或简写一个点 `.`）让它**当下重新加载**。
+
+      #### 🧠 记忆钩子
+
+      `source` = “把配置重读一遍”，省得关掉再开终端。
+    tags: [zsh, config]
+
+  - id: sh-alias
+    prompt: 给 {git status} [起别名]叫 {gs}
+    answer: alias gs="git status"
+    accept:
+      - alias gs='git status'
+    explanation: |
+      `alias` 把长命令起个短名。写进 `~/.zshrc` 就永久生效——之后敲 `gs` 等于敲
+      `git status`。
+
+      #### 🧠 记忆钩子
+
+      `alias` = “外号”，给常用的长命令起个好记的小名。
+    tags: [zsh, config]
+
+  - id: sh-zsh-glob
+    prompt: 用 zsh 的递归通配[列出]当前目录下{所有 .js 文件}
+    constraint: 含任意层级的子目录
+    answer: ls **/*.js
+    explanation: |
+      zsh 内建**递归通配** `**`。`**/*.js` 匹配任意深度子目录里的 `.js` 文件。
+
+      #### 🧠 记忆钩子
+
+      一个 `*` 只管当前一层，`**` 一杆子捅到底（所有子目录）。
+
+      #### 🕰 冷知识
+
+      这是 zsh **默认就有**的本事；bash 得先 `shopt -s globstar` 才支持 `**`。
+    tags: [zsh, glob]

@@ -9,13 +9,7 @@ import {
   type ReviewState,
 } from '../srs/scheduler';
 import { buildQueue } from '../study/queue';
-import {
-  clearAllProgress,
-  getAllProgress,
-  getAllUserCards,
-  putProgress,
-  type CardProgress,
-} from '../store/db';
+import { clearAllProgress, getAllProgress, putProgress, type CardProgress } from '../store/db';
 
 const NEW_PER_SESSION = 10;
 
@@ -46,9 +40,13 @@ function answersFor(card: Card): string[] {
   return [card.answer, ...(card.accept ?? [])];
 }
 
+/**
+ * Drives SRS review of a single deck. Review progress is keyed globally by card
+ * id, so switching the `deck` prop (deck picker) reuses the same store; the
+ * queue rebuilds for the new deck's cards.
+ */
 export function useStudy(deck: Deck): StudyApi {
   const [progress, setProgress] = useState<Map<string, CardProgress>>(new Map());
-  const [userCards, setUserCards] = useState<Card[]>([]);
   const [loaded, setLoaded] = useState(false);
 
   const [queue, setQueue] = useState<Card[]>([]);
@@ -61,12 +59,8 @@ export function useStudy(deck: Deck): StudyApi {
   // State of the card currently being answered (its FSRS state before grading).
   const [currentState, setCurrentState] = useState<ReviewState | null>(null);
 
-  // The review pool: bundled deck cards plus the user's 生词本 cards.
-  const pool = useMemo<Card[]>(() => [...deck.cards, ...userCards], [deck.cards, userCards]);
-  const userIds = useMemo(() => new Set(userCards.map((c) => c.id)), [userCards]);
-
-  const buildFrom = useCallback((source: Map<string, CardProgress>, poolCards: Card[]) => {
-    const q = buildQueue(poolCards, source, new Date(), { newPerSession: NEW_PER_SESSION });
+  const buildFrom = useCallback((source: Map<string, CardProgress>, cards: readonly Card[]) => {
+    const q = buildQueue(cards, source, new Date(), { newPerSession: NEW_PER_SESSION });
     setQueue(q.cards);
     setMeta({ dueCount: q.dueCount, newCount: q.newCount });
     setIndex(0);
@@ -75,22 +69,20 @@ export function useStudy(deck: Deck): StudyApi {
     setIntervals(null);
   }, []);
 
-  // Load persisted progress and user cards, then build the first session.
+  // Load progress and (re)build the queue whenever the selected deck changes.
   useEffect(() => {
     let cancelled = false;
-    void Promise.all([getAllProgress(), getAllUserCards()]).then(([records, ucards]) => {
+    void getAllProgress().then((records) => {
       if (cancelled) return;
       const map = new Map(records.map((r) => [r.cardId, r]));
-      const cards: Card[] = ucards;
       setProgress(map);
-      setUserCards(cards);
       setLoaded(true);
-      buildFrom(map, [...deck.cards, ...cards]);
+      buildFrom(map, deck.cards);
     });
     return () => {
       cancelled = true;
     };
-  }, [deck.cards, buildFrom]);
+  }, [deck.id, deck.cards, buildFrom]);
 
   const current = queue[index] ?? null;
 
@@ -114,7 +106,7 @@ export function useStudy(deck: Deck): StudyApi {
       const prev = progress.get(current.id);
       const record: CardProgress = {
         cardId: current.id,
-        deckId: userIds.has(current.id) ? 'user' : deck.id,
+        deckId: deck.id,
         state: nextState,
         reps: (prev?.reps ?? 0) + 1,
         lapses: nextState.lapses,
@@ -128,17 +120,20 @@ export function useStudy(deck: Deck): StudyApi {
       setIntervals(null);
       setCurrentState(null);
     },
-    [current, phase, currentState, progress, deck.id, userIds],
+    [current, phase, currentState, progress, deck.id],
   );
 
-  const restart = useCallback(() => buildFrom(progress, pool), [buildFrom, progress, pool]);
+  const restart = useCallback(
+    () => buildFrom(progress, deck.cards),
+    [buildFrom, progress, deck.cards],
+  );
 
   const reset = useCallback(async () => {
     await clearAllProgress();
     const empty = new Map<string, CardProgress>();
     setProgress(empty);
-    buildFrom(empty, pool);
-  }, [buildFrom, pool]);
+    buildFrom(empty, deck.cards);
+  }, [buildFrom, deck.cards]);
 
   const status: Status = useMemo(() => {
     if (!loaded) return 'loading';

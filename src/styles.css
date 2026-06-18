@@ -110,6 +110,20 @@ body {
 .counts-row .deck-name {
   margin-right: 4px;
 }
+.deck-select {
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 14px;
+  font-family: var(--sans);
+  cursor: pointer;
+  outline: none;
+}
+.deck-select:focus {
+  border-color: var(--accent);
+}
 .subtabs {
   display: flex;
   gap: 2px;
